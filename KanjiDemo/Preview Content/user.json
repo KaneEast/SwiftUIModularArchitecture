@@ -1,0 +1,290 @@
+{
+    "results": [
+        {
+            "gender": "female",
+            "name": {
+                "title": "Ms",
+                "first": "Alcinda",
+                "last": "Monteiro"
+            },
+            "location": {
+                "street": {
+                    "number": 7754,
+                    "name": "Rua Piauí "
+                },
+                "city": "Santarém",
+                "state": "Bahia",
+                "country": "Brazil",
+                "postcode": 99312,
+                "coordinates": {
+                    "latitude": "-78.4618",
+                    "longitude": "3.0995"
+                },
+                "timezone": {
+                    "offset": "-8:00",
+                    "description": "Pacific Time (US & Canada)"
+                }
+            },
+            "email": "alcinda.monteiro@example.com",
+            "login": {
+                "uuid": "09f2c8c2-f12f-43b7-b9a8-25f915d4d460",
+                "username": "orangedog394",
+                "password": "newport",
+                "salt": "gl8mSCSL",
+                "md5": "425cea292d7cd05da76692a3c4dd5f22",
+                "sha1": "ffef6224b27e0d2221421b564afbcdce0270e8b5",
+                "sha256": "7ade87850f0d17fb37065ce8cdd29dcda88e528b6ef09449e3671690ec239a1a"
+            },
+            "dob": {
+                "date": "1998-04-19T18:01:25.823Z",
+                "age": 27
+            },
+            "registered": {
+                "date": "2014-09-19T20:40:52.908Z",
+                "age": 11
+            },
+            "phone": "(38) 2833-0382",
+            "cell": "(51) 2740-5077",
+            "id": {
+                "name": "CPF",
+                "value": "612.492.660-14"
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/women/7.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/women/7.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/women/7.jpg"
+            },
+            "nat": "BR"
+        },
+        {
+            "gender": "female",
+            "name": {
+                "title": "Miss",
+                "first": "Medina",
+                "last": "Havik"
+            },
+            "location": {
+                "street": {
+                    "number": 3537,
+                    "name": "Nedre Kalbakkvei"
+                },
+                "city": "Forbregd",
+                "state": "Nord-Trøndelag",
+                "country": "Norway",
+                "postcode": "7280",
+                "coordinates": {
+                    "latitude": "-20.5874",
+                    "longitude": "143.6665"
+                },
+                "timezone": {
+                    "offset": "+8:00",
+                    "description": "Beijing, Perth, Singapore, Hong Kong"
+                }
+            },
+            "email": "medina.havik@example.com",
+            "login": {
+                "uuid": "3824c708-0bc9-4146-b4a9-036bda41d592",
+                "username": "beautifuldog313",
+                "password": "disney1",
+                "salt": "DirgGGg3",
+                "md5": "e2b7d682eef29b11bc9330fcd274b1f8",
+                "sha1": "a67f8915e548620051771654d7ac3b51118b06b5",
+                "sha256": "5c8078a26344d3c2d5171678781c2b09dad3623c0b4210967cbee5695a7ca9f6"
+            },
+            "dob": {
+                "date": "1986-08-20T18:47:28.131Z",
+                "age": 39
+            },
+            "registered": {
+                "date": "2012-10-17T02:46:06.828Z",
+                "age": 13
+            },
+            "phone": "38720389",
+            "cell": "97572618",
+            "id": {
+                "name": "FN",
+                "value": "20088622635"
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/women/55.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/women/55.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/women/55.jpg"
+            },
+            "nat": "NO"
+        },
+        {
+            "gender": "male",
+            "name": {
+                "title": "Mr",
+                "first": "Ronith",
+                "last": "Mardhekar"
+            },
+            "location": {
+                "street": {
+                    "number": 447,
+                    "name": "Racecource Rd"
+                },
+                "city": "Eluru",
+                "state": "Puducherry",
+                "country": "India",
+                "postcode": 43410,
+                "coordinates": {
+                    "latitude": "-6.6957",
+                    "longitude": "41.7927"
+                },
+                "timezone": {
+                    "offset": "-10:00",
+                    "description": "Hawaii"
+                }
+            },
+            "email": "ronith.mardhekar@example.com",
+            "login": {
+                "uuid": "7241881e-4023-4b89-8ec3-05defb8b4a2e",
+                "username": "orangepeacock400",
+                "password": "access",
+                "salt": "wVzw18Al",
+                "md5": "d8f9afd95422af5804f0cc93bd8c0011",
+                "sha1": "8584e51ca6bcf8736818277a35283dda5c43fdaa",
+                "sha256": "0a388574bbfc5e0271e076f95fe2238f9143b4705a66bb6964cd3a8429f36765"
+            },
+            "dob": {
+                "date": "1950-12-17T17:39:33.372Z",
+                "age": 74
+            },
+            "registered": {
+                "date": "2018-11-01T19:03:29.572Z",
+                "age": 7
+            },
+            "phone": "7200672682",
+            "cell": "9323027119",
+            "id": {
+                "name": "UIDAI",
+                "value": "246300039202"
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/men/9.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/men/9.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/men/9.jpg"
+            },
+            "nat": "IN"
+        },
+        {
+            "gender": "female",
+            "name": {
+                "title": "Ms",
+                "first": "Frida",
+                "last": "Jensen"
+            },
+            "location": {
+                "street": {
+                    "number": 2059,
+                    "name": "Holbergsvej"
+                },
+                "city": "København N",
+                "state": "Midtjylland",
+                "country": "Denmark",
+                "postcode": 54739,
+                "coordinates": {
+                    "latitude": "8.0112",
+                    "longitude": "102.0952"
+                },
+                "timezone": {
+                    "offset": "-6:00",
+                    "description": "Central Time (US & Canada), Mexico City"
+                }
+            },
+            "email": "frida.jensen@example.com",
+            "login": {
+                "uuid": "85c710a4-b55c-465d-b631-8c51d153009c",
+                "username": "redlion155",
+                "password": "federico",
+                "salt": "E7XRpfD1",
+                "md5": "602620697dc6729029f81ce55e24ebe2",
+                "sha1": "fa3be197d1033f18c0e0cf2095ae9a18ca0615ac",
+                "sha256": "6833710ad98b24a8ecd9d9b67c843d5ae752ca87452250724b038d54250e8ab7"
+            },
+            "dob": {
+                "date": "1962-07-30T05:56:20.721Z",
+                "age": 63
+            },
+            "registered": {
+                "date": "2012-11-28T01:31:35.531Z",
+                "age": 12
+            },
+            "phone": "17126005",
+            "cell": "71765250",
+            "id": {
+                "name": "CPR",
+                "value": "300762-3443"
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/women/74.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/women/74.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/women/74.jpg"
+            },
+            "nat": "DK"
+        },
+        {
+            "gender": "female",
+            "name": {
+                "title": "Miss",
+                "first": "Ariana",
+                "last": "Roberts"
+            },
+            "location": {
+                "street": {
+                    "number": 1888,
+                    "name": "Dickens Street"
+                },
+                "city": "Tauranga",
+                "state": "Southland",
+                "country": "New Zealand",
+                "postcode": 28765,
+                "coordinates": {
+                    "latitude": "-52.7156",
+                    "longitude": "58.2889"
+                },
+                "timezone": {
+                    "offset": "-9:00",
+                    "description": "Alaska"
+                }
+            },
+            "email": "ariana.roberts@example.com",
+            "login": {
+                "uuid": "d4e53503-c22f-437a-9001-5f3144d53f33",
+                "username": "ticklishsnake244",
+                "password": "screamer",
+                "salt": "8mX0MVZ4",
+                "md5": "16fb41e78e4ee2ebfddf15514028f596",
+                "sha1": "f529724146ce02c2a2222c9cedec777ed67bdcc6",
+                "sha256": "7120f420d198b1ef56fee525be98ac335fdc31d2bdbbbea9a955378c96df0b98"
+            },
+            "dob": {
+                "date": "1996-09-29T09:46:42.180Z",
+                "age": 29
+            },
+            "registered": {
+                "date": "2007-08-13T01:59:31.880Z",
+                "age": 18
+            },
+            "phone": "(064)-781-6188",
+            "cell": "(719)-277-7677",
+            "id": {
+                "name": "",
+                "value": null
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/women/26.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/women/26.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/women/26.jpg"
+            },
+            "nat": "NZ"
+        }
+    ],
+    "info": {
+        "seed": "a4aa28be30a31f85",
+        "results": 5,
+        "page": 1,
+        "version": "1.4"
+    }
+}
