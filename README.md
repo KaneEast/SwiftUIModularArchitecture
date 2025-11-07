@@ -4,25 +4,15 @@ Complete production architecture demo with **many-to-many relationships** and **
 
 ## Features Demonstrated
 
-### ✅ Many-to-Many Relationships
-- Student ↔ Class bidirectional relationship
-- SwiftData `@Relationship` with inverse
-- Cascading operations
+### ✅ SwiftData with Repository Pattern (Dataset Observable)
+- No Database related code on SwfitUI View
 
-### ✅ Cross-Module Navigation
-- StudentModule → ClassModule (tap class from student detail)
-- ClassModule → StudentModule (tap student from class detail)
-- **Automatic tab switching!**
+### ✅ Modular Navigation
+- Programatic Navigation
+- DeepLink Handling
 
 ### ✅ AppModule Orchestration
 - Coordinates multiple feature modules
-- Sets up cross-navigation via closures
-- Manages shared dependencies
-
-### ✅ Reactive Architecture (Combine)
-- Shared repository instances via DependencyContainer
-- `observeAll()` auto-updates views
-- No manual refresh needed
 
 ## Architecture
 
