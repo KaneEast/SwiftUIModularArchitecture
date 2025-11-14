@@ -205,3 +205,82 @@ By elevating **Module to first-class citizen**, we get:
    - ✅ Testable without UI rendering
 
 **This is the architecture that scales from demo to production.**
+
+---
+
+## How Does This Compare to TCA (The Composable Architecture)?
+
+Both architectures solve the "SwiftUI View-First" problem, but with fundamentally different philosophies:
+
+### Philosophy & Approach
+
+| Aspect | Module-First (This) | TCA |
+|--------|-------------------|-----|
+| **Core Abstraction** | Feature-level Module orchestrator | Store + Reducer state machine |
+| **State Management** | Observable ViewModels + Combine | Single Store with Actions/Reducers |
+| **Paradigm** | **Object-Oriented + Reactive** | **Functional + Unidirectional** |
+| **Learning Curve** | Gentle (familiar OOP patterns) | Steep (requires functional thinking) |
+| **Boilerplate** | Minimal (classes + closures) | Significant (Actions, Reducers, Effects) |
+| **Navigation** | Module Router + closures | NavigationStack reducers |
+| **Cross-Module Communication** | Direct closure calls | Effects + Actions |
+| **Testing** | Standard XCTest + mocks | Reducer logic tests (deterministic) |
+| **Dependencies** | DependencyContainer (any DI) | TCA's Dependency system (controlled) |
+
+### Code Comparison: Adding a Student
+
+#### Module-First (This Architecture)
+```swift
+// In ViewModel - simple, direct
+func addStudent(name: String) {
+    let student = Student(name: name, email: "\(name)@school.edu", grade: 10)
+    try? repository.create(student)
+    // Observable repository automatically updates UI
+}
+
+// Cross-module navigation - just a closure
+onNavigateToClass?(selectedClass)
+```
+
+#### TCA
+```swift
+// 1. Define Action
+enum Action {
+    case addStudent(name: String)
+    case studentAdded(Student)
+    case navigateToClass(Class)
+}
+
+// 2. Define Reducer
+func reduce(into state: inout State, action: Action) -> Effect<Action> {
+    switch action {
+    case .addStudent(let name):
+        let student = Student(name: name, ...)
+        return .run { send in
+            try await repository.create(student)
+            await send(.studentAdded(student))
+        }
+    case .studentAdded(let student):
+        state.students.append(student)
+        return .none
+    case .navigateToClass(let class):
+        // More reducer logic...
+        return .none
+    }
+}
+```
+
+### When to Choose Each?
+
+#### Choose Module-First if you want:
+- ✅ **Fast development** - Less ceremony, familiar OOP patterns
+- ✅ **Gradual adoption** - Easy to integrate into existing projects
+- ✅ **Flexible state** - ViewModels + Combine + any data layer
+- ✅ **Simple navigation** - Closures and routers feel natural
+- ✅ **Team familiarity** - Most iOS devs know OOP + MVVM patterns
+
+#### Choose TCA if you want:
+- ✅ **Complete testability** - Every state change is deterministic
+- ✅ **Time travel debugging** - TCA provides built-in tooling
+- ✅ **Strict unidirectional flow** - Enforced at compile time
+- ✅ **Complex state machines** - Reducers excel at complex logic
+- ✅ **Functional paradigm** - Team comfortable with FP concepts
