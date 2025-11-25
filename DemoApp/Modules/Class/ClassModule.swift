@@ -7,16 +7,15 @@ import SwiftUI
 import SwiftData
 
 public final class ClassModule {
-    private let dependencyContainer: DependencyContainer
+    private let service: ClassService
     private let viewModel: ClassViewModel
     public let router = ModuleRouter<ClassNavigationDestination>()
 
-    // Cross-module navigation closure
     public var onNavigateToStudent: ((Student) -> Void)?
 
     public init(dependencyContainer: DependencyContainer) {
-        self.dependencyContainer = dependencyContainer
-        self.viewModel = ClassViewModel(repository: dependencyContainer.classRepository)
+        self.service = ClassService(repository: dependencyContainer.classRepository)
+        self.viewModel = ClassViewModel(service: service)
     }
 
     public func rootView() -> some View {

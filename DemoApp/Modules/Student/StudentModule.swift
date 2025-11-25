@@ -7,26 +7,36 @@ import SwiftUI
 import SwiftData
 
 public final class StudentModule {
-    private let dependencyContainer: DependencyContainer
+    private let service: StudentService      // Service 层
     private let viewModel: StudentViewModel
     public let router = ModuleRouter<StudentNavigationDestination>()
 
     // Cross-module navigation closure
     public var onNavigateToClass: ((Class) -> Void)?
 
+    // Logout closure (optional, injected by AppModule)
+    public var onLogout: (() -> Void)?
+
     public init(dependencyContainer: DependencyContainer, randomUserAPI: RandomUserAPIService) {
-        self.dependencyContainer = dependencyContainer
-        self.viewModel = StudentViewModel(
+        // 1. 创建 Service（业务逻辑层）
+        self.service = StudentService(
             repository: dependencyContainer.studentRepository,
-            randomUserAPI: randomUserAPI
+            apiService: randomUserAPI
         )
+
+        // 2. 创建 ViewModel（UI 状态层）
+        self.viewModel = StudentViewModel(service: service)
     }
 
     public func rootView() -> some View {
-        StudentListView(viewModel: viewModel, navigation: router.nav)
-            .routerModifier(router: router) { destination in
-                self.destinationView(for: destination)
-            }
+        StudentListView(
+            viewModel: viewModel,
+            navigation: router.nav,
+            onLogout: onLogout
+        )
+        .routerModifier(router: router) { destination in
+            self.destinationView(for: destination)
+        }
     }
 
     @ViewBuilder

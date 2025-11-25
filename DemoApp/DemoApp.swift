@@ -1,6 +1,6 @@
 //
-//  KanjiDemoApp.swift
-//  KanjiDemo - Student-Class Management Demo
+//  DemoApp.swift
+//  Student-Class Management Demo
 //
 //  Demonstrates:
 //  - Many-to-many relationships (Student ↔ Class)
@@ -14,23 +14,30 @@ import SwiftUI
 import SwiftData
 
 @main
-struct KanjiDemoApp: App {
+struct DemoApp: App {
     let modelContainer: ModelContainer
+    let authState: AuthenticationState
     let appModule: AppModule
 
     init() {
         do {
             // Setup SwiftData with both models
             modelContainer = try ModelContainer(for: Student.self, Class.self)
-            
+
+            // Create authentication state
+            authState = AuthenticationState()
+
             // Create dependency container
             let dependencyContainer = DependencyContainer(
                 modelContext: modelContainer.mainContext
             )
-            
+
             // Create app module (orchestrates everything)
-            appModule = AppModule(dependencyContainer: dependencyContainer)
-            
+            appModule = AppModule(
+                dependencyContainer: dependencyContainer,
+                authState: authState
+            )
+
             print("🚀 Student-Class Demo initialized")
         } catch {
             fatalError("Failed to initialize app: \(error)")

@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		81980A5A2EB9EA1E009BC190 /* KanjiDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KanjiDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81980A5A2EB9EA1E009BC190 /* DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		81980A5C2EB9EA1E009BC190 /* KanjiDemo */ = {
+		81980A5C2EB9EA1E009BC190 /* DemoApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KanjiDemo;
+			path = DemoApp;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		81980A512EB9EA1E009BC190 = {
 			isa = PBXGroup;
 			children = (
-				81980A5C2EB9EA1E009BC190 /* KanjiDemo */,
+				81980A5C2EB9EA1E009BC190 /* DemoApp */,
 				81980A5B2EB9EA1E009BC190 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		81980A5B2EB9EA1E009BC190 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				81980A5A2EB9EA1E009BC190 /* KanjiDemo.app */,
+				81980A5A2EB9EA1E009BC190 /* DemoApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		81980A592EB9EA1E009BC190 /* KanjiDemo */ = {
+		81980A592EB9EA1E009BC190 /* DemoApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 81980A682EB9EA24009BC190 /* Build configuration list for PBXNativeTarget "KanjiDemo" */;
+			buildConfigurationList = 81980A682EB9EA24009BC190 /* Build configuration list for PBXNativeTarget "DemoApp" */;
 			buildPhases = (
 				81980A562EB9EA1E009BC190 /* Sources */,
 				81980A572EB9EA1E009BC190 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				81980A5C2EB9EA1E009BC190 /* KanjiDemo */,
+				81980A5C2EB9EA1E009BC190 /* DemoApp */,
 			);
-			name = KanjiDemo;
+			name = DemoApp;
 			packageProductDependencies = (
 			);
 			productName = KanjiDemo;
-			productReference = 81980A5A2EB9EA1E009BC190 /* KanjiDemo.app */;
+			productReference = 81980A5A2EB9EA1E009BC190 /* DemoApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 81980A552EB9EA1E009BC190 /* Build configuration list for PBXProject "KanjiDemo" */;
+			buildConfigurationList = 81980A552EB9EA1E009BC190 /* Build configuration list for PBXProject "DemoApp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				81980A592EB9EA1E009BC190 /* KanjiDemo */,
+				81980A592EB9EA1E009BC190 /* DemoApp */,
 			);
 		};
 /* End PBXProject section */
@@ -251,7 +251,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"KanjiDemo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"DemoApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -279,7 +279,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"KanjiDemo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"DemoApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -303,7 +303,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		81980A552EB9EA1E009BC190 /* Build configuration list for PBXProject "KanjiDemo" */ = {
+		81980A552EB9EA1E009BC190 /* Build configuration list for PBXProject "DemoApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				81980A662EB9EA24009BC190 /* Debug */,
@@ -312,7 +312,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		81980A682EB9EA24009BC190 /* Build configuration list for PBXNativeTarget "KanjiDemo" */ = {
+		81980A682EB9EA24009BC190 /* Build configuration list for PBXNativeTarget "DemoApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				81980A692EB9EA24009BC190 /* Debug */,

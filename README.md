@@ -1,286 +1,273 @@
 # SwiftUI Modular Architecture
 
-## Why Module-First Architecture?
+**A Module-First SwiftUI Architecture** - Making project development as clear as building with LEGO blocks.
 
-In **UIKit**, the `ViewController` was the first-class citizen - it orchestrated business logic, navigation, and lifecycle management.
+## Core Features
 
-In **SwiftUI**, the `View` became the natural first-class citizen - but this creates problems for advanced and complex projects:
-- Views are meant to be lightweight and declarative
-- Business logic scattered across views becomes hard to maintain
-- Cross-feature navigation and coordination becomes tangled
-- Testing and reusability suffer
+- **🎯 Feature-Level Encapsulation** - Each Module is a complete feature unit containing Service + ViewModel + Views
+- **🔗 Decoupled Cross-Module Communication** - Closure-based contract design with zero inter-module dependencies
+- **📂 Service Layer for Centralized Business Logic** - Open `Services/` to see all core business logic
+- **🧪 Highly Testable** - Service and ViewModel can be tested independently without UI
+- **📦 Module-Level Reusability** - Entire folders can be directly migrated to other projects
+- **🔐 Complete Authentication Flow** - Onboarding → Login → Main App
 
-**This architecture introduces Modules as the first-class citizen** - a pattern that scales naturally for production apps.
+**Module-First elevates your architecture from screen-level (ViewController) to feature-level (Module)**
 
 ---
 
-## Demo: Student-Class Management
+## Demo App: Student-Class Management System
 
-Complete production architecture demo with **many-to-many relationships** and **cross-module navigation**.
+A complete production-grade SwiftUI application demonstrating:
+- ✅ Many-to-many relationships (Student ↔ Class)
+- ✅ Cross-module navigation (Student → Class → Student)
+- ✅ Authentication flow (Onboarding → Login → Authenticated)
+- ✅ API integration (RandomUser API)
+- ✅ SwiftData reactive updates
+- ✅ Deep Link support
 
-## Features Demonstrated
+---
 
-### ✅ SwiftData with Repository Pattern (Dataset Observable)
-- No Database related code on SwfitUI View
-
-### ✅ Modular Navigation
-- Programatic Navigation
-- DeepLink Handling
-
-### ✅ AppModule Orchestration
-- Coordinates multiple feature modules
-
-## Architecture: Module as First Class
-
-### What is a Module?
-
-A **Module** is a self-contained feature unit that owns:
-- **Navigation Logic** (Router with type-safe routes)
-- **Multiple ViewModels** (not just one like ViewController)
-- **Multiple Views** (List, Detail, etc. - all lightweight UI)
-- **Public Interface** (closure-based contracts for cross-module communication)
-
-**Modules are NOT just ViewControllers renamed** - they're an evolution:
-- ViewController = 1 controller : 1 view (tight coupling)
-- **Module = 1 orchestrator : N viewmodels : M views** (clean separation)
-
-Modules orchestrate **entire features**, not individual screens.
+## Project Structure
 
 ```
-App
-    ↓
-DependencyContainer
-    ├── Repository
-    └── APIService
-    ↓
-AppModule (Orchestrates cross-module communication)
-    ├── StudentModule (First-class feature)
-    │   ├── Router (Navigation logic)
-    │   ├── ViewModel (Business logic)
-    │   ├── ListView (Lightweight UI)
-    │   └── DetailView (Lightweight UI)
-    │
-    └── ClassModule (First-class feature)
-        ├── Router (Navigation logic)
-        ├── ViewModel (Business logic)
-        ├── ListView (Lightweight UI)
-        └── DetailView (Lightweight UI)
+KanjiDemo/
+├── Modules/                              ⭐ Organized by Module
+│   ├── Student/                          ← All Student module files
+│   │   ├── StudentModule.swift           ← Assembler (DI Container)
+│   │   ├── StudentService.swift          ← Core business logic
+│   │   ├── StudentViewModel.swift        ← UI state management
+│   │   ├── StudentListView.swift         ← UI (pure presentation)
+│   │   └── StudentDetailView.swift       ← UI (pure presentation)
+│   │
+│   ├── Class/                            ← All Class module files
+│   │   ├── ClassModule.swift
+│   │   ├── ClassService.swift
+│   │   ├── ClassViewModel.swift
+│   │   ├── ClassListView.swift
+│   │   └── ClassDetailView.swift
+│   │
+│   ├── Login/                            ← Login module
+│   │   ├── LoginModule.swift
+│   │   └── LoginViewModel.swift
+│   │
+│   └── Onboarding/                       ← Onboarding module
+│       ├── OnboardingModule.swift
+│       └── OnboardingViewModel.swift
+│
+├── Core/                                 ← Shared infrastructure
+│   ├── Navigation/
+│   │   ├── ModuleRouter.swift            ← Unified navigation system
+│   │   ├── RouterPath.swift
+│   │   └── DeepLinkCapable.swift
+│   ├── AuthenticationState.swift        ← Authentication state management
+│   ├── BaseRepository.swift             ← Generic Repository base class
+│   ├── DependencyContainer.swift        ← Dependency injection container
+│   └── NetworkService.swift             ← Network service
+│
+├── Models/                               ← Shared data models
+│   ├── Student.swift
+│   └── Class.swift
+│
+├── Repository/                           ← Data access layer
+│   ├── StudentRepository.swift
+│   └── ClassRepository.swift
+│
+└── App/                                  ← Application entry
+    ├── AppModule.swift                   ← Top-level module coordinator
+    └── KanjiDemoApp.swift                ← App entry point
 ```
 
-## Cross-Module Navigation
+---
 
-The key innovation is **cross-module navigation via closures**:
+## Architecture Layers
+
+### Core Concept: Module-First + Service Layer
+
+```
+┌─────────────────────────────────────────────────────┐
+│  View (Pure UI)                                     │
+│  - Rendering only                                   │
+│  - Binds to ViewModel state                         │
+└────────────────────┬────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────┐
+│  ViewModel (UI State Management - Optional)         │
+│  - searchText, isLoading, errorMessage              │
+│  - Calls Service methods                            │
+│  - Contains NO business logic                       │
+└────────────────────┬────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────┐
+│  Service ⭐ Core Business Logic Layer                │
+│  - fetchAndSaveRandomStudents()                     │
+│  - enrollStudent(in: class)                         │
+│  - deleteStudent() with business rules              │
+│  - Composes Repository + API calls                  │
+└────────────────────┬────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────┐
+│  Repository (Data Access)                           │
+│  - create(), update(), delete(), observeAll()       │
+│  - Encapsulates SwiftData operations                │
+│  - Provides reactive data streams (Combine)         │
+└─────────────────────────────────────────────────────┘
+                     ▲
+                     │
+┌────────────────────┴────────────────────────────────┐
+│  Module (Assembler - DI Container)                  │
+│  1. Creates Service (injects Repository + API)      │
+│  2. Creates ViewModel (injects Service)             │
+│  3. Provides rootView()                             │
+│  4. Exposes cross-module communication closures     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## What is a Module?
+
+**A Module is a feature-level self-contained unit**, not a screen-level ViewController.
+
+### What a Module Contains:
+
+1. **Service** - Core business logic for the feature
+2. **ViewModel(s)** - UI state management (optional, simple Views can skip it)
+3. **View(s)** - Multiple views (ListView, DetailView, etc.)
+4. **Router** - Type-safe navigation system
+5. **Public Interface** - Closure-based contracts for cross-module communication
+
+### Comparison with ViewController:
+
+| Dimension | ViewController | Module-First |
+|------|----------------|--------------|
+| **Granularity** | 1 screen | 1 complete feature |
+| **Navigation** | Mixed in controller | Unified Router |
+| **Business Logic** | Mixed in controller | Separate Service layer |
+| **Composition** | 1:1 (controller:view) | 1:N:M (module:viewmodels:views) |
+| **Cross-Feature Interaction** | Tightly coupled (protocol/delegate) | Loosely coupled (closure contracts) |
+| **Testability** | Requires View rendering | Service can be tested independently |
+
+---
+
+## Example: Complete Flow of StudentModule
+
+### 1. Service - Core Business Logic
 
 ```swift
-// In AppModule.setupCrossModuleNavigation()
+// StudentService.swift - Centrally manages all Student business logic
+public final class StudentService {
+    private let repository: StudentRepository
+    private let apiService: RandomUserAPIService
 
-// Student → Class
-studentModule.onNavigateToClass = { [weak self] classItem in
-    self?.selectedTab = .classes  // Switch tab
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-        self?.classModule.router.navigate(to: .classDetail(classItem))
+    // Business logic: Fetch from API and save
+    func fetchAndSaveRandomStudents(count: Int) async throws -> [Student] {
+        // 1. Call API
+        let users = try await apiService.fetchRandomUsers(count: count)
+
+        // 2. Transform data
+        let students = users.map { Student(name: $0.name, ...) }
+
+        // 3. Save to database
+        for student in students {
+            try repository.create(student)
+        }
+
+        return students
     }
-}
 
-// Class → Student
-classModule.onNavigateToStudent = { [weak self] student in
-    self?.selectedTab = .students  // Switch tab
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-        self?.studentModule.router.navigate(to: .studentDetail(student))
+    // Business logic: Enroll student in class (includes business rules)
+    func enrollStudent(_ student: Student, in classItem: Class) throws {
+        // Business rule: Check if already enrolled
+        guard !student.classes.contains(classItem) else {
+            throw StudentServiceError.alreadyEnrolled
+        }
+
+        // Business rule: Check class capacity
+        guard classItem.students.count < 30 else {
+            throw StudentServiceError.classIsFull
+        }
+
+        student.classes.append(classItem)
+        try repository.update(student)
     }
 }
 ```
 
-## Module-First: Beyond ViewController and View-First
-
-| Aspect | UIKit ViewController | SwiftUI View-First | **Module-First** |
-|--------|---------------------|-------------------|------------------|
-| **Granularity** | 1 screen | Single View | **Entire feature** |
-| **Navigation** | Mixed in controller | Scattered in Views | **Centralized Router** |
-| **Scope** | 1 ViewController : 1 View | N Views (no coordinator) | **1 Module : N ViewModels : M Views** |
-| **Cross-Feature Nav** | Tight coupling via protocols | Direct View dependencies | **Closure-based contracts** |
-| **Business Logic** | Mixed in ViewController | Mixed in Views | **Isolated in ViewModels** |
-| **Testing** | Need to test controller+view | Need to render Views | **Test Module independently** |
-| **Coordinator** | Manual Coordinator pattern | No standard solution | **Built-in AppModule** |
-
-**Key Insight**: Module is not ViewController++, it's a **feature-level orchestrator** that scales beyond screen-level control.
-
-### Example: The Problem with View-First
+### 2. ViewModel - UI State Management
 
 ```swift
-// ❌ View-First: Navigation logic leaks into Views
-struct StudentDetailView: View {
-    var body: some View {
-        NavigationLink(destination: ClassDetailView(class: student.class)) {
-            // Now StudentDetailView depends on ClassDetailView!
-            // Business logic mixed with UI!
+// StudentViewModel.swift - Manages UI state only
+@Observable
+public class StudentViewModel {
+    private let service: StudentService
+
+    // UI state
+    public var students: [Student] = []
+    public var searchText: String = ""
+    public var isLoadingFromAPI: Bool = false
+    public var errorMessage: String?
+
+    // UI logic: Call Service
+    public func fetchRandomStudents(count: Int) {
+        isLoadingFromAPI = true
+        Task {
+            do {
+                _ = try await service.fetchAndSaveRandomStudents(count: count)
+                isLoadingFromAPI = false
+            } catch {
+                errorMessage = error.localizedDescription
+                isLoadingFromAPI = false
+            }
         }
     }
 }
 ```
 
-### Solution: Module-First Pattern
+### 3. Module - Assembler
 
 ```swift
-// ✅ Module-First: Module owns navigation, View stays pure
-class StudentModule {
-    var onNavigateToClass: ((Class) -> Void)?  // Public contract
+// StudentModule.swift - Assembles Service + ViewModel + View
+public final class StudentModule {
+    private let service: StudentService
+    private let viewModel: StudentViewModel
+    public let router = ModuleRouter<StudentNavigationDestination>()
 
-    func handleClassTap(_ classItem: Class) {
-        onNavigateToClass?(classItem)  // Module handles logic
+    // Cross-module communication interface
+    public var onNavigateToClass: ((Class) -> Void)?
+    public var onLogout: (() -> Void)?
+
+    public init(dependencyContainer: DependencyContainer, randomUserAPI: RandomUserAPIService) {
+        // 1. Create Service (business logic layer)
+        self.service = StudentService(
+            repository: dependencyContainer.studentRepository,
+            apiService: randomUserAPI
+        )
+
+        // 2. Create ViewModel (UI state layer)
+        self.viewModel = StudentViewModel(service: service)
+    }
+
+    public func rootView() -> some View {
+        StudentListView(viewModel: viewModel, navigation: router.nav)
     }
 }
+```
 
-// View is just UI
-struct StudentDetailView: View {
-    let onClassTap: (Class) -> Void  // Receives closure
+### 4. View - Pure UI
+
+```swift
+// StudentListView.swift - Rendering only
+struct StudentListView: View {
+    @Bindable var viewModel: StudentViewModel
+    let navigation: NavigationBuilder<StudentNavigationDestination>
 
     var body: some View {
-        Button("View Class") { onClassTap(student.class) }
-    }
-}
-```
-
-## Architecture Benefits
-
-### Reactive Updates
-```swift
-// ViewModel subscribes once
-repository.observeAll()
-    .sink { students in
-        self.students = students  // Auto-update!
-    }
-
-// Anywhere in app:
-repository.create(student)  // ViewModel updates automatically!
-```
-
-### Cross-Module Navigation
-```swift
-// Module exposes navigation closure
-var onNavigateToClass: ((Class) -> Void)?
-
-// AppModule wires it up
-studentModule.onNavigateToClass = { classItem in
-    self.classModule.router.navigate(to: .classDetail(classItem))
-}
-```
-
-## Why This Matters for Production Apps
-
-### SwiftUI's View-First Limitation
-
-Apple's SwiftUI naturally promotes **View as the first-class citizen** because:
-- Views are structs (lightweight, value types)
-- SwiftUI's declarative syntax makes Views easy to compose
-- Samples and tutorials focus on View-centric patterns
-
-**This works great for simple apps**, but falls apart when you need:
-- Deep linking across features
-- Complex multi-step workflows
-- Shared business logic
-- Independent module development
-- Comprehensive testing
-
-### Module-First: The Missing Pattern
-
-By elevating **Module to first-class citizen**, we get:
-
-1. **Clear Separation of Concerns**
-   - Views = UI declaration only
-   - Modules = Feature orchestration
-   - AppModule = Cross-feature coordination
-
-2. **Beyond ViewController Limitations**
-   - ViewController: Orchestrates 1 screen with tight View coupling
-   - **Module: Orchestrates entire feature** with multiple ViewModels/Views
-   - Better separation: Router (navigation) + ViewModels (logic) + Views (UI)
-
-3. **Production-Ready Patterns**
-   - ✅ AppModule orchestration
-   - ✅ DependencyContainer for injection
-   - ✅ BaseRepository with Combine
-   - ✅ Type-safe navigation via Router
-   - ✅ Cross-module communication via closures
-   - ✅ Testable without UI rendering
-
-**This is the architecture that scales from demo to production.**
-
----
-
-## How Does This Compare to TCA (The Composable Architecture)?
-
-Both architectures solve the "SwiftUI View-First" problem, but with fundamentally different philosophies:
-
-### Philosophy & Approach
-
-| Aspect | Module-First (This) | TCA |
-|--------|-------------------|-----|
-| **Core Abstraction** | Feature-level Module orchestrator | Store + Reducer state machine |
-| **State Management** | Observable ViewModels + Combine | Single Store with Actions/Reducers |
-| **Paradigm** | **Object-Oriented + Reactive** | **Functional + Unidirectional** |
-| **Learning Curve** | Gentle (familiar OOP patterns) | Steep (requires functional thinking) |
-| **Boilerplate** | Minimal (classes + closures) | Significant (Actions, Reducers, Effects) |
-| **Navigation** | Module Router + closures | NavigationStack reducers |
-| **Cross-Module Communication** | Direct closure calls | Effects + Actions |
-| **Testing** | Standard XCTest + mocks | Reducer logic tests (deterministic) |
-| **Dependencies** | DependencyContainer (any DI) | TCA's Dependency system (controlled) |
-
-### Code Comparison: Adding a Student
-
-#### Module-First (This Architecture)
-```swift
-// In ViewModel - simple, direct
-func addStudent(name: String) {
-    let student = Student(name: name, email: "\(name)@school.edu", grade: 10)
-    try? repository.create(student)
-    // Observable repository automatically updates UI
-}
-
-// Cross-module navigation - just a closure
-onNavigateToClass?(selectedClass)
-```
-
-#### TCA
-```swift
-// 1. Define Action
-enum Action {
-    case addStudent(name: String)
-    case studentAdded(Student)
-    case navigateToClass(Class)
-}
-
-// 2. Define Reducer
-func reduce(into state: inout State, action: Action) -> Effect<Action> {
-    switch action {
-    case .addStudent(let name):
-        let student = Student(name: name, ...)
-        return .run { send in
-            try await repository.create(student)
-            await send(.studentAdded(student))
+        List(viewModel.filteredStudents) { student in
+            Button(action: { navigation.push(.studentDetail(student)) }) {
+                Text(student.name)
+            }
         }
-    case .studentAdded(let student):
-        state.students.append(student)
-        return .none
-    case .navigateToClass(let class):
-        // More reducer logic...
-        return .none
+        .searchable(text: $viewModel.searchText)
     }
 }
 ```
-
-### When to Choose Each?
-
-#### Choose Module-First if you want:
-- ✅ **Fast development** - Less ceremony, familiar OOP patterns
-- ✅ **Gradual adoption** - Easy to integrate into existing projects
-- ✅ **Flexible state** - ViewModels + Combine + any data layer
-- ✅ **Simple navigation** - Closures and routers feel natural
-- ✅ **Team familiarity** - Most iOS devs know OOP + MVVM patterns
-
-#### Choose TCA if you want:
-- ✅ **Complete testability** - Every state change is deterministic
-- ✅ **Time travel debugging** - TCA provides built-in tooling
-- ✅ **Strict unidirectional flow** - Enforced at compile time
-- ✅ **Complex state machines** - Reducers excel at complex logic
-- ✅ **Functional paradigm** - Team comfortable with FP concepts

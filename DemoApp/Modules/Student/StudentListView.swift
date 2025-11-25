@@ -8,6 +8,7 @@ import SwiftUI
 struct StudentListView: View {
     let viewModel: StudentViewModel
     let navigation: NavigationBuilder<StudentNavigationDestination>
+    let onLogout: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,6 +48,17 @@ struct StudentListView: View {
                     }
                 }
                 .disabled(viewModel.isLoadingFromAPI)
+            }
+
+            // Logout button (if provided)
+            if let onLogout {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        onLogout()
+                    } label: {
+                        Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
+                    }
+                }
             }
         }
         .alert("API Error", isPresented: .constant(viewModel.errorMessage != nil)) {

@@ -12,15 +12,25 @@ public final class AppModule {
     public let dependencyContainer: DependencyContainer
     public let deepLinkRouter = DeepLinkRouter()
 
+    // MARK: - Authentication
+    public let authState: AuthenticationState
+
     // MARK: - Feature Modules
     public let studentModule: StudentModule
     public let classModule: ClassModule
+    public let loginModule: LoginModule
+    public let onboardingModule: OnboardingModule
 
     // MARK: - App State
     public var selectedTab: Tab = .students
 
-    public init(dependencyContainer: DependencyContainer) {
+    public init(dependencyContainer: DependencyContainer, authState: AuthenticationState) {
         self.dependencyContainer = dependencyContainer
+        self.authState = authState
+
+        // Initialize authentication modules
+        self.loginModule = LoginModule(authState: authState)
+        self.onboardingModule = OnboardingModule(authState: authState)
 
         // Initialize feature modules with network services
         self.studentModule = StudentModule(
@@ -32,16 +42,21 @@ public final class AppModule {
         // Setup cross-module navigation
         setupCrossModuleNavigation()
 
+        // Setup logout callback
+        setupLogoutCallback()
+
         // Register modules for deep links
         deepLinkRouter.register(studentModule)
         deepLinkRouter.register(classModule)
 
-        // Setup sample data with relationships
-        populateSampleDataIfNeeded()
+        // Setup sample data with relationships (only if authenticated)
+        if authState.status == .authenticated {
+            populateSampleDataIfNeeded()
+        }
     }
 
     // MARK: - Cross-Module Navigation Setup
-    
+
     private func setupCrossModuleNavigation() {
         // Student → Class navigation
         studentModule.onNavigateToClass = { [weak self] classItem in
@@ -63,6 +78,16 @@ public final class AppModule {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.studentModule.router.navigate(to: .studentDetail(student))
             }
+        }
+    }
+
+    // MARK: - Logout Setup
+
+    private func setupLogoutCallback() {
+        studentModule.onLogout = { [weak self] in
+            guard let self = self else { return }
+            print("🔓 Logout requested")
+            self.authState.logout()
         }
     }
 
@@ -144,14 +169,32 @@ public final class AppModule {
 // MARK: - Root View (Matches MarkdownAI's AppView pattern)
 
 struct AppRootView: View {
-    let appModule: AppModule
-    
+    @Bindable var appModule: AppModule
+
     var body: some View {
+        // Switch based on authentication state
+        switch appModule.authState.status {
+        case .onboarding:
+            appModule.onboardingModule.rootView()
+                .transition(.opacity)
+
+        case .unauthenticated:
+            appModule.loginModule.rootView()
+                .transition(.opacity)
+
+        case .authenticated:
+            authenticatedView
+                .transition(.opacity)
+        }
+    }
+
+    @ViewBuilder
+    private var authenticatedView: some View {
         let tabBinding = Binding(
             get: { appModule.selectedTab },
             set: { appModule.selectTab($0) }
         )
-        
+
         TabView(selection: tabBinding) {
             studentTabView
                 .tabItem {
