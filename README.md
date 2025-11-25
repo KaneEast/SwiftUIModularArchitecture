@@ -271,3 +271,86 @@ struct StudentListView: View {
     }
 }
 ```
+
+---
+
+## Testing
+
+### In-Memory Testing with Swift Testing
+
+This project uses **Swift Testing** framework with **in-memory SwiftData storage** for fast, isolated tests.
+
+#### Key Approach: Real Repositories with `isStoredInMemoryOnly: true`
+
+Instead of creating mock repositories, we use the **actual repository implementations** with SwiftData's in-memory mode:
+
+```swift
+// TestDependencyContainer.swift
+public static func create() -> DependencyContainer {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Student.self, Class.self, configurations: config)
+    return DependencyContainer(modelContext: container.mainContext)
+}
+```
+
+#### Benefits
+
+- ✅ **Tests real code** - We test actual repository implementation, not mocks
+- ✅ **Fast execution** - No disk I/O, everything in memory
+- ✅ **Isolated tests** - Each test gets a fresh database
+- ✅ **Relationships work** - SwiftData's many-to-many relationships function correctly
+- ✅ **No duplication** - No need for separate mock repository classes
+
+#### Test Example
+
+```swift
+@Suite("StudentService Tests")
+struct StudentServiceTests {
+
+    @Test("Enroll student successfully")
+    func enrollStudent_success() throws {
+        // Given - Use real repository with in-memory storage
+        let (studentRepo, _) = TestDependencyContainer.createRepositories()
+        let apiService = MockRandomUserAPIService()
+        let service = StudentService(repository: studentRepo, apiService: apiService)
+
+        let student = TestDataFactory.createStudent(name: "John")
+        let classItem = TestDataFactory.createClass(title: "Math 101")
+        try studentRepo.create(student)
+
+        // When
+        try service.enrollStudent(student, in: classItem)
+
+        // Then
+        #expect(student.classes.count == 1)
+        #expect(student.classes.first?.title == "Math 101")
+    }
+
+    @Test("Enroll student throws when class is full")
+    func enrollStudent_classFull() throws {
+        let (classItem, _) = TestDataFactory.createFullClass() // 30 students
+        let newStudent = TestDataFactory.createStudent(name: "Late Student")
+
+        #expect(throws: StudentServiceError.classIsFull) {
+            try service.enrollStudent(newStudent, in: classItem)
+        }
+    }
+}
+```
+
+#### Test Coverage
+
+**StudentService (14 tests)**
+- Fetch and save from API
+- Enrollment rules (success, already enrolled, class full)
+- Delete operations
+- Search functionality
+- Reactive updates
+
+**ClassService (18 tests)**
+- Create with validation
+- Delete with relationship cleanup
+- Capacity calculations
+- Reactive updates
+
+See [TESTING.md](TESTING.md) for complete testing documentation.

@@ -6,7 +6,7 @@
 import Foundation
 import SwiftData
 
-public class StudentRepository: BaseRepository<Student> {
+public class StudentRepository: BaseRepository<Student>, StudentRepositoryProtocol {
     
     public func fetchByGrade(_ grade: Int) throws -> [Student] {
         let predicate = #Predicate<Student> { $0.grade == grade }

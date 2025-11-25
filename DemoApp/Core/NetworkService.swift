@@ -136,10 +136,17 @@ public struct RandomUserResult: Decodable {
     }
 }
 
+// MARK: - Random User API Protocol
+
+/// Protocol for Random User API service (enables dependency injection for testing)
+public protocol RandomUserAPIServiceProtocol {
+    func fetchRandomUsers(count: Int) async throws -> [RandomUserResult]
+}
+
 // MARK: - Random User API Service
 
 /// Specific API service for Random User API
-public class RandomUserAPIService {
+public class RandomUserAPIService: RandomUserAPIServiceProtocol {
     private let networkService: NetworkService
 
     public init(networkService: NetworkService) {

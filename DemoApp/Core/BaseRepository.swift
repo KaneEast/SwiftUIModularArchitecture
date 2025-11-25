@@ -95,7 +95,12 @@ public class BaseRepository<Model: PersistentModel> {
     // MARK: - CRUD Operations
 
     public func create(_ model: Model) throws {
-        context.insert(model)
+        // Only insert if model is not already in this context
+        // SwiftData crashes if you try to insert a model that's already inserted
+        // Use identity comparison (===) to check if it's the exact same context
+        if model.modelContext !== context {
+            context.insert(model)
+        }
         try save()
         changeSubject.send(.created(model))
     }

@@ -6,7 +6,7 @@
 import Foundation
 import SwiftData
 
-public class ClassRepository: BaseRepository<Class> {
+public class ClassRepository: BaseRepository<Class>, ClassRepositoryProtocol {
     
     public func fetchBySubject(_ subject: String) throws -> [Class] {
         let predicate = #Predicate<Class> { $0.subject == subject }

@@ -7,9 +7,9 @@ import Foundation
 import Combine
 
 public final class ClassService {
-    private let repository: ClassRepository
+    private let repository: any ClassRepositoryProtocol
 
-    public init(repository: ClassRepository) {
+    public init(repository: any ClassRepositoryProtocol) {
         self.repository = repository
     }
 

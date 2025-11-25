@@ -11,10 +11,10 @@ import Combine
 /// Student 模块的核心业务逻辑服务
 /// 职责：封装和组织 Student 相关的所有业务操作
 public final class StudentService {
-    private let repository: StudentRepository
-    private let apiService: RandomUserAPIService
+    private let repository: any StudentRepositoryProtocol
+    private let apiService: any RandomUserAPIServiceProtocol
 
-    public init(repository: StudentRepository, apiService: RandomUserAPIService) {
+    public init(repository: any StudentRepositoryProtocol, apiService: any RandomUserAPIServiceProtocol) {
         self.repository = repository
         self.apiService = apiService
     }
