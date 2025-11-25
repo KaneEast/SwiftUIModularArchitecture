@@ -64,9 +64,8 @@ public final class AppModule {
             print("📍 Cross-nav: Student → Class: \(classItem.title)")
             // Switch to classes tab and navigate to detail
             self.selectedTab = .classes
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.classModule.router.navigate(to: .classDetail(classItem))
-            }
+            self.classModule.router.popToRoot()
+            self.classModule.router.navigate(to: .classDetail(classItem))
         }
         
         // Class → Student navigation
@@ -75,9 +74,8 @@ public final class AppModule {
             print("📍 Cross-nav: Class → Student: \(student.name)")
             // Switch to students tab and navigate to detail
             self.selectedTab = .students
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.studentModule.router.navigate(to: .studentDetail(student))
-            }
+            self.studentModule.router.popToRoot()
+            self.studentModule.router.navigate(to: .studentDetail(student))
         }
     }
 
