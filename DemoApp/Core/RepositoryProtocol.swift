@@ -23,6 +23,7 @@ public protocol RepositoryProtocol {
     func update(_ model: Model) throws
     func delete(_ model: Model) throws
     func deleteAll() throws
+    func count(predicate: Predicate<Model>?) throws -> Int
 
     // MARK: - Reactive Observation
     func observeAll() -> AnyPublisher<[Model], Never>

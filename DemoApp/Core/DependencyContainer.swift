@@ -2,20 +2,23 @@
 //  DependencyContainer.swift
 //  KanjiDemo - Core Module: Dependency Injection
 //
+//  Purpose: Concrete implementation of DependencyProviding protocol
+//  Provides real implementations of all dependencies for production use
+//
 
 import Foundation
 import SwiftData
 
-public class DependencyContainer {
+public final class DependencyContainer: DependencyProviding {
     public let modelContext: ModelContext
 
     // MARK: - Repositories (Lazy initialization)
 
-    public lazy var studentRepository: StudentRepository = {
+    public lazy var studentRepository: any StudentRepositoryProtocol = {
         StudentRepository(context: modelContext)
     }()
-    
-    public lazy var classRepository: ClassRepository = {
+
+    public lazy var classRepository: any ClassRepositoryProtocol = {
         ClassRepository(context: modelContext)
     }()
 
@@ -25,7 +28,7 @@ public class DependencyContainer {
         NetworkService()
     }()
 
-    public lazy var randomUserAPI: RandomUserAPIService = {
+    public lazy var randomUserAPI: any RandomUserAPIServiceProtocol = {
         RandomUserAPIService(networkService: networkService)
     }()
 

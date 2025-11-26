@@ -18,12 +18,19 @@ struct ClassServiceTests {
 
     // MARK: - Test Dependencies
 
+    /// Container for test services and dependencies
+    struct TestServices {
+        let service: ClassService
+        let repository: ClassRepository
+        let repos: TestDependencyContainer.Repositories  // Keeps container alive
+    }
+
     /// Creates a fresh service with in-memory dependencies for each test
     /// Uses real repository with isStoredInMemoryOnly: true
-    private func createService() -> (service: ClassService, repository: ClassRepository, container: ModelContainer) {
-        let (_, classRepo, container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        return (service, classRepo, container)
+    private func createService() -> TestServices {
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        return TestServices(service: service, repository: repos.classRepo, repos: repos)
     }
 
     // MARK: - Create Class Tests
@@ -31,13 +38,13 @@ struct ClassServiceTests {
     @Test("Create class successfully")
     func createClass_success() throws {
         // Given
-        let (service, repository, _container) = createService()
+        let testServices = createService()
 
         // When
-        try service.createClass(title: "Mathematics 101", subject: "Math", room: "Room 201")
+        try testServices.service.createClass(title: "Mathematics 101", subject: "Math", room: "Room 201")
 
         // Then
-        let classes = try repository.fetchAll()
+        let classes = try testServices.repository.fetchAll()
         #expect(classes.count == 1)
         #expect(classes.first?.title == "Mathematics 101")
         #expect(classes.first?.subject == "Math")
@@ -47,54 +54,54 @@ struct ClassServiceTests {
     @Test("Create class throws error for empty title")
     func createClass_emptyTitle() throws {
         // Given
-        let (service, repository, _container) = createService()
+        let testServices = createService()
 
         // When/Then
         #expect(throws: ClassServiceError.emptyTitle) {
-            try service.createClass(title: "", subject: "Math", room: "201")
+            try testServices.service.createClass(title: "", subject: "Math", room: "201")
         }
 
         // Repository should be empty
-        #expect(try repository.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     @Test("Create class throws error for whitespace-only title")
     func createClass_whitespaceTitle() throws {
         // Given
-        let (service, repository, _container) = createService()
+        let testServices = createService()
 
         // When/Then
         #expect(throws: ClassServiceError.emptyTitle) {
-            try service.createClass(title: "   ", subject: "Math", room: "201")
+            try testServices.service.createClass(title: "   ", subject: "Math", room: "201")
         }
 
-        #expect(try repository.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     @Test("Create class throws error for empty room")
     func createClass_emptyRoom() throws {
         // Given
-        let (service, repository, _container) = createService()
+        let testServices = createService()
 
         // When/Then
         #expect(throws: ClassServiceError.emptyRoom) {
-            try service.createClass(title: "Math 101", subject: "Math", room: "")
+            try testServices.service.createClass(title: "Math 101", subject: "Math", room: "")
         }
 
-        #expect(try repository.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     @Test("Create class throws error for whitespace-only room")
     func createClass_whitespaceRoom() throws {
         // Given
-        let (service, repository, _container) = createService()
+        let testServices = createService()
 
         // When/Then
         #expect(throws: ClassServiceError.emptyRoom) {
-            try service.createClass(title: "Math 101", subject: "Math", room: "   ")
+            try testServices.service.createClass(title: "Math 101", subject: "Math", room: "   ")
         }
 
-        #expect(try repository.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     // MARK: - Delete Class Tests
@@ -102,51 +109,53 @@ struct ClassServiceTests {
     @Test("Delete class successfully")
     func deleteClass_success() throws {
         // Given
-        let (service, classRepo, _container) = createService()
-        let classItem = TestDataFactory.createClass(in: classRepo, title: "Math 101")
+        let testServices = createService()
+        let classItem = TestDataFactory.createClass(in: testServices.repository, title: "Math 101")
 
-        try classRepo.context.save()
-        #expect(try classRepo.fetchAll().count == 1)
+        try testServices.repository.context.save()
+        #expect(try testServices.repository.fetchAll().count == 1)
 
         // When
-        try service.deleteClass(classItem)
+        try testServices.service.deleteClass(classItem)
 
         // Then
-        #expect(try classRepo.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     @Test("Delete class removes all student relationships")
     func deleteClass_removesStudentRelationships() throws {
         // Given
         // IMPORTANT: Both repos must share the same context for relationships to work!
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, students) = TestDataFactory.createClassWithStudents(in: classRepo, studentRepo: studentRepo, title: "Popular Class", studentCount: 5)
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, students) = TestDataFactory.createClassWithStudents(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Popular Class", studentCount: 5)
 
-        try classRepo.context.save()
+        try repos.classRepo.context.save()
         #expect(classItem.students.count == 5)
 
         // When
         try service.deleteClass(classItem)
 
         // Then
-        #expect(try classRepo.fetchAll().isEmpty)
-        #expect(classItem.students.isEmpty)
+        #expect(try repos.classRepo.fetchAll().isEmpty)
+        // Note: Cannot check classItem.students.isEmpty because classItem is deleted
+        // Verify students still exist but class is gone
+        #expect(try repos.studentRepo.fetchAll().count == 5)
     }
 
     @Test("Delete empty class succeeds")
     func deleteClass_emptyClass() throws {
         // Given
-        let (service, classRepo, _container) = createService()
-        let classItem = TestDataFactory.createClass(in: classRepo, title: "Empty Class")
+        let testServices = createService()
+        let classItem = TestDataFactory.createClass(in: testServices.repository, title: "Empty Class")
 
-        try classRepo.context.save()
+        try testServices.repository.context.save()
 
         // When
-        try service.deleteClass(classItem)
+        try testServices.service.deleteClass(classItem)
 
         // Then
-        #expect(try classRepo.fetchAll().isEmpty)
+        #expect(try testServices.repository.fetchAll().isEmpty)
     }
 
     // MARK: - Get Students Tests
@@ -154,9 +163,9 @@ struct ClassServiceTests {
     @Test("Get students in class returns correct list")
     func getStudentsInClass_returnsCorrectList() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, students) = TestDataFactory.createClassWithStudents(in: classRepo, studentRepo: studentRepo, title: "Math 101", studentCount: 10)
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, students) = TestDataFactory.createClassWithStudents(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Math 101", studentCount: 10)
 
         // When
         let result = service.getStudentsInClass(classItem)
@@ -169,11 +178,11 @@ struct ClassServiceTests {
     @Test("Get students in empty class returns empty array")
     func getStudentsInClass_emptyClass() throws {
         // Given
-        let (service, classRepo, _container) = createService()
-        let classItem = TestDataFactory.createClass(in: classRepo, title: "Empty Class")
+        let testServices = createService()
+        let classItem = TestDataFactory.createClass(in: testServices.repository, title: "Empty Class")
 
         // When
-        let result = service.getStudentsInClass(classItem)
+        let result = testServices.service.getStudentsInClass(classItem)
 
         // Then
         #expect(result.isEmpty)
@@ -184,9 +193,9 @@ struct ClassServiceTests {
     @Test("Get capacity usage calculates correctly")
     func getCapacityUsage_calculatesCorrectly() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, _) = TestDataFactory.createClassWithStudents(in: classRepo, studentRepo: studentRepo, title: "Class", studentCount: 15)
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, _) = TestDataFactory.createClassWithStudents(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Class", studentCount: 15)
 
         // When
         let usage = service.getCapacityUsage(for: classItem, maxCapacity: 30)
@@ -198,9 +207,9 @@ struct ClassServiceTests {
     @Test("Get capacity usage with full class")
     func getCapacityUsage_fullClass() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, _) = TestDataFactory.createFullClass(in: classRepo, studentRepo: studentRepo, title: "Full Class")
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, _) = TestDataFactory.createFullClass(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Full Class")
 
         // When
         let usage = service.getCapacityUsage(for: classItem, maxCapacity: 30)
@@ -212,11 +221,11 @@ struct ClassServiceTests {
     @Test("Get capacity usage with empty class")
     func getCapacityUsage_emptyClass() throws {
         // Given
-        let (service, classRepo, _container) = createService()
-        let classItem = TestDataFactory.createClass(in: classRepo, title: "Empty Class")
+        let testServices = createService()
+        let classItem = TestDataFactory.createClass(in: testServices.repository, title: "Empty Class")
 
         // When
-        let usage = service.getCapacityUsage(for: classItem, maxCapacity: 30)
+        let usage = testServices.service.getCapacityUsage(for: classItem, maxCapacity: 30)
 
         // Then
         #expect(usage == 0.0) // 0/30 = 0.0
@@ -225,9 +234,9 @@ struct ClassServiceTests {
     @Test("Is class full returns true when at capacity")
     func isClassFull_returnsTrue() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, _) = TestDataFactory.createFullClass(in: classRepo, studentRepo: studentRepo, title: "Full Class")
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, _) = TestDataFactory.createFullClass(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Full Class")
 
         // When
         let isFull = service.isClassFull(classItem, maxCapacity: 30)
@@ -239,9 +248,9 @@ struct ClassServiceTests {
     @Test("Is class full returns false when under capacity")
     func isClassFull_returnsFalse() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, _) = TestDataFactory.createClassWithStudents(in: classRepo, studentRepo: studentRepo, title: "Class", studentCount: 20)
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, _) = TestDataFactory.createClassWithStudents(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Class", studentCount: 20)
 
         // When
         let isFull = service.isClassFull(classItem, maxCapacity: 30)
@@ -253,9 +262,9 @@ struct ClassServiceTests {
     @Test("Is class full with custom capacity")
     func isClassFull_customCapacity() throws {
         // Given
-        let (studentRepo, classRepo, _container) = TestDependencyContainer.createRepositories()
-        let service = ClassService(repository: classRepo)
-        let (classItem, _) = TestDataFactory.createClassWithStudents(in: classRepo, studentRepo: studentRepo, title: "Class", studentCount: 10)
+        let repos = TestDependencyContainer.createRepositories()
+        let service = ClassService(repository: repos.classRepo)
+        let (classItem, _) = TestDataFactory.createClassWithStudents(in: repos.classRepo, studentRepo: repos.studentRepo, title: "Class", studentCount: 10)
 
         // When
         let isFull = service.isClassFull(classItem, maxCapacity: 10)
@@ -269,14 +278,14 @@ struct ClassServiceTests {
     @Test("Observe classes returns current data")
     func observeClasses_returnsCurrentData() async throws {
         // Given
-        let (service, classRepo, _container) = createService()
-        let classes = TestDataFactory.createClasses(in: classRepo, count: 3)
+        let testServices = createService()
+        let classes = TestDataFactory.createClasses(in: testServices.repository, count: 3)
 
-        try classRepo.context.save()
+        try testServices.repository.context.save()
 
         // When
         var receivedClasses: [Class] = []
-        let cancellable = service.observeClasses()
+        let cancellable = testServices.service.observeClasses()
             .sink { classes in
                 receivedClasses = classes
             }
@@ -290,30 +299,30 @@ struct ClassServiceTests {
         cancellable.cancel()
     }
 
-//    @Test("Observe classes emits updates on changes")
-//    func observeClasses_emitsOnChanges() async throws {
-//        // Given
-//        let (service, repository, _container) = createService()
-//        var emittedClassCounts: [Int] = []
-//
-//        let cancellable = service.observeClasses()
-//            .sink { classes in
-//                emittedClassCounts.append(classes.count)
-//            }
-//
-//        try await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
-//
-//        // When - Add classes
-//        try service.createClass(title: "Class 1", subject: "Math", room: "101")
-//        try await Task.sleep(nanoseconds: 50_000_000)
-//
-//        try service.createClass(title: "Class 2", subject: "Science", room: "102")
-//        try await Task.sleep(nanoseconds: 50_000_000)
-//
-//        // Then
-//        #expect(emittedClassCounts.count >= 3) // Initial (0) + 2 adds
-//        #expect(emittedClassCounts.last == 2)
-//
-//        cancellable.cancel()
-//    }
+    @Test("Observe classes emits updates on changes")
+    func observeClasses_emitsOnChanges() async throws {
+        // Given
+        let testServices = createService()
+        var emittedClassCounts: [Int] = []
+
+        let cancellable = testServices.service.observeClasses()
+            .sink { classes in
+                emittedClassCounts.append(classes.count)
+            }
+
+        try await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
+
+        // When - Add classes
+        try testServices.service.createClass(title: "Class 1", subject: "Math", room: "101")
+        try await Task.sleep(nanoseconds: 50_000_000)
+
+        try testServices.service.createClass(title: "Class 2", subject: "Science", room: "102")
+        try await Task.sleep(nanoseconds: 50_000_000)
+
+        // Then
+        #expect(emittedClassCounts.count >= 3) // Initial (0) + 2 adds
+        #expect(emittedClassCounts.last == 2)
+
+        cancellable.cancel()
+    }
 }

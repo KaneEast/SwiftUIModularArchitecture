@@ -17,11 +17,11 @@ public final class StudentModule {
     // Logout closure (optional, injected by AppModule)
     public var onLogout: (() -> Void)?
 
-    public init(dependencyContainer: DependencyContainer, randomUserAPI: RandomUserAPIService) {
+    public init(dependencies: any DependencyProviding) {
         // 1. 创建 Service（业务逻辑层）
         self.service = StudentService(
-            repository: dependencyContainer.studentRepository,
-            apiService: randomUserAPI
+            repository: dependencies.studentRepository,
+            apiService: dependencies.randomUserAPI
         )
 
         // 2. 创建 ViewModel（UI 状态层）

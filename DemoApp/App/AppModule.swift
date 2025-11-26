@@ -9,7 +9,7 @@ import Observation
 
 @Observable
 public final class AppModule {
-    public let dependencyContainer: DependencyContainer
+    public let dependencies: any DependencyProviding
     public let deepLinkRouter = DeepLinkRouter()
 
     // MARK: - Authentication
@@ -24,20 +24,17 @@ public final class AppModule {
     // MARK: - App State
     public var selectedTab: Tab = .students
 
-    public init(dependencyContainer: DependencyContainer, authState: AuthenticationState) {
-        self.dependencyContainer = dependencyContainer
+    public init(dependencies: any DependencyProviding, authState: AuthenticationState) {
+        self.dependencies = dependencies
         self.authState = authState
 
         // Initialize authentication modules
         self.loginModule = LoginModule(authState: authState)
         self.onboardingModule = OnboardingModule(authState: authState)
 
-        // Initialize feature modules with network services
-        self.studentModule = StudentModule(
-            dependencyContainer: dependencyContainer,
-            randomUserAPI: dependencyContainer.randomUserAPI
-        )
-        self.classModule = ClassModule(dependencyContainer: dependencyContainer)
+        // Initialize feature modules with dependencies
+        self.studentModule = StudentModule(dependencies: dependencies)
+        self.classModule = ClassModule(dependencies: dependencies)
 
         // Setup cross-module navigation
         setupCrossModuleNavigation()
@@ -107,11 +104,11 @@ public final class AppModule {
 
     // MARK: - Sample Data Population
     private func populateSampleDataIfNeeded() {
-        let studentRepo = dependencyContainer.studentRepository
-        let classRepo = dependencyContainer.classRepository
+        let studentRepo = dependencies.studentRepository
+        let classRepo = dependencies.classRepository
 
-        let studentCount = (try? studentRepo.count()) ?? 0
-        let classCount = (try? classRepo.count()) ?? 0
+        let studentCount = (try? studentRepo.count(predicate: nil)) ?? 0
+        let classCount = (try? classRepo.count(predicate: nil)) ?? 0
 
         if studentCount == 0 && classCount == 0 {
             print("🚀 AppModule: Populating sample data with relationships...")

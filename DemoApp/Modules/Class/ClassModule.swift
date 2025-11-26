@@ -13,8 +13,8 @@ public final class ClassModule {
 
     public var onNavigateToStudent: ((Student) -> Void)?
 
-    public init(dependencyContainer: DependencyContainer) {
-        self.service = ClassService(repository: dependencyContainer.classRepository)
+    public init(dependencies: any DependencyProviding) {
+        self.service = ClassService(repository: dependencies.classRepository)
         self.viewModel = ClassViewModel(service: service)
     }
 

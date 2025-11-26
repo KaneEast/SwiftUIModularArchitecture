@@ -34,7 +34,7 @@ struct DemoApp: App {
 
             // Create app module (orchestrates everything)
             appModule = AppModule(
-                dependencyContainer: dependencyContainer,
+                dependencies: dependencyContainer,
                 authState: authState
             )
 
