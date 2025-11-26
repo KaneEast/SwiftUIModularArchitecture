@@ -17,13 +17,13 @@ public class StudentViewModel {
 
     // MARK: - UI State
 
-    public var students: [Student] = []
+    private(set) var students: [Student] = []
     public var searchText: String = "" {
         didSet { applyFilters() }
     }
-    public var filteredStudents: [Student] = []
-    public var isLoadingFromAPI: Bool = false
-    public var isLoadingData: Bool = true
+    private(set) var filteredStudents: [Student] = []
+    private(set) var isLoadingFromAPI: Bool = false
+    private(set) var isLoadingData: Bool = true
     public var errorMessage: String?
 
     // MARK: - Initialization

@@ -17,11 +17,11 @@ public class ClassViewModel {
 
     // MARK: - UI State
 
-    public var classes: [Class] = []
+    private(set) var classes: [Class] = []
     public var searchText: String = "" {
         didSet { applyFilters() }
     }
-    public var filteredClasses: [Class] = []
+    private(set) var filteredClasses: [Class] = []
     public var isLoadingData: Bool = true
     public var errorMessage: String?
 
