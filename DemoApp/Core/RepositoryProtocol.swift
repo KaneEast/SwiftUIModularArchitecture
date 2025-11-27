@@ -40,3 +40,10 @@ public protocol StudentRepositoryProtocol: RepositoryProtocol where Model == Stu
 public protocol ClassRepositoryProtocol: RepositoryProtocol where Model == Class {
     // Class-specific methods can be added here as needed
 }
+
+/// Protocol for Exam-specific repository operations
+public protocol ExamRepositoryProtocol: RepositoryProtocol where Model == Exam {
+    func fetchByClass(_ classItem: Class) throws -> [Exam]
+    func fetchUpcomingExams() throws -> [Exam]
+    func fetchPastExams() throws -> [Exam]
+}

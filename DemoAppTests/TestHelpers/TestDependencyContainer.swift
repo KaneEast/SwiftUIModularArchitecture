@@ -19,11 +19,13 @@ public enum TestDependencyContainer {
     public struct Repositories {
         public let studentRepo: StudentRepository
         public let classRepo: ClassRepository
+        public let examRepo: ExamRepository
         private let container: ModelContainer  // Keep alive
 
-        fileprivate init(studentRepo: StudentRepository, classRepo: ClassRepository, container: ModelContainer) {
+        fileprivate init(studentRepo: StudentRepository, classRepo: ClassRepository, examRepo: ExamRepository, container: ModelContainer) {
             self.studentRepo = studentRepo
             self.classRepo = classRepo
+            self.examRepo = examRepo
             self.container = container
         }
     }
@@ -45,14 +47,15 @@ public enum TestDependencyContainer {
     public static func createRepositories() -> Repositories {
         // Create a fresh in-memory ModelContainer for each test
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Student.self, Class.self, configurations: config)
+        let container = try! ModelContainer(for: Student.self, Class.self, Exam.self, configurations: config)
         let context = container.mainContext
 
         // Create fresh repositories with this isolated context
         let studentRepo = StudentRepository(context: context)
         let classRepo = ClassRepository(context: context)
+        let examRepo = ExamRepository(context: context)
 
         // Container is kept alive by the Repositories struct
-        return Repositories(studentRepo: studentRepo, classRepo: classRepo, container: container)
+        return Repositories(studentRepo: studentRepo, classRepo: classRepo, examRepo: examRepo, container: container)
     }
 }

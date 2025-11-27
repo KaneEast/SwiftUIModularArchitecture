@@ -64,7 +64,7 @@ public final class AppModule {
             self.classModule.router.popToRoot()
             self.classModule.router.navigate(to: .classDetail(classItem))
         }
-        
+
         // Class → Student navigation
         classModule.onNavigateToStudent = { [weak self] student in
             guard let self = self else { return }
@@ -106,11 +106,13 @@ public final class AppModule {
     private func populateSampleDataIfNeeded() {
         let studentRepo = dependencies.studentRepository
         let classRepo = dependencies.classRepository
+        let examRepo = dependencies.examRepository
 
         let studentCount = (try? studentRepo.count(predicate: nil)) ?? 0
         let classCount = (try? classRepo.count(predicate: nil)) ?? 0
+        let examCount = (try? examRepo.count(predicate: nil)) ?? 0
 
-        if studentCount == 0 && classCount == 0 {
+        if studentCount == 0 && classCount == 0 && examCount == 0 {
             print("🚀 AppModule: Populating sample data with relationships...")
 
             // Create classes FIRST
@@ -149,14 +151,40 @@ public final class AppModule {
                 try studentRepo.create(bob)
                 try studentRepo.create(charlie)
                 try studentRepo.create(diana)
-                
+
                 print("  ✅ Created 4 students with class enrollments")
-                print("🎉 AppModule: Sample data population complete")
             } catch {
                 print("  ❌ Failed to create students: \(error)")
+                return
+            }
+
+            // Create exams with relationships
+            let futureDate1 = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
+            let futureDate2 = Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date()
+            let pastDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+
+            let mathMidterm = Exam(title: "Math Midterm Exam", subject: "Mathematics", date: futureDate1, maxScore: 100, classItem: math)
+            let physicsFinal = Exam(title: "Physics Final Exam", subject: "Physics", date: futureDate2, maxScore: 150, classItem: physics)
+            let chemistryQuiz = Exam(title: "Chemistry Quiz", subject: "Chemistry", date: pastDate, maxScore: 50, classItem: chemistry)
+
+            // Assign students to exams
+            mathMidterm.students = [alice, bob, diana]
+            physicsFinal.students = [alice, charlie, diana]
+            chemistryQuiz.students = [bob, charlie, diana]
+
+            // Save exams
+            do {
+                try examRepo.create(mathMidterm)
+                try examRepo.create(physicsFinal)
+                try examRepo.create(chemistryQuiz)
+
+                print("  ✅ Created 3 exams with student registrations")
+                print("🎉 AppModule: Sample data population complete")
+            } catch {
+                print("  ❌ Failed to create exams: \(error)")
             }
         } else {
-            print("📊 AppModule: Found \(studentCount) students, \(classCount) classes")
+            print("📊 AppModule: Found \(studentCount) students, \(classCount) classes, \(examCount) exams")
         }
     }
 }

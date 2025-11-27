@@ -18,6 +18,7 @@ public protocol DependencyProviding {
     // MARK: - Repositories
     var studentRepository: any StudentRepositoryProtocol { get }
     var classRepository: any ClassRepositoryProtocol { get }
+    var examRepository: any ExamRepositoryProtocol { get }
 
     // MARK: - Network Services
     var networkService: NetworkService { get }

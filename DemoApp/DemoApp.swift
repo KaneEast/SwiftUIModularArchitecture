@@ -21,8 +21,8 @@ struct DemoApp: App {
 
     init() {
         do {
-            // Setup SwiftData with both models
-            modelContainer = try ModelContainer(for: Student.self, Class.self)
+            // Setup SwiftData with all models
+            modelContainer = try ModelContainer(for: Student.self, Class.self, Exam.self)
 
             // Create authentication state
             authState = AuthenticationState()

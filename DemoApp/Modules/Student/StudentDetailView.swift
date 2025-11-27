@@ -7,7 +7,8 @@ import SwiftUI
 
 struct StudentDetailView: View {
     let student: Student
-    let onClassTap: (Class) -> Void
+    let router: ModuleRouter<StudentNavigationDestination>
+    let onNavigateToClass: ((Class) -> Void)?
 
     var body: some View {
         ScrollView {
@@ -42,7 +43,10 @@ struct StudentDetailView: View {
                             .padding()
                     } else {
                         ForEach(student.classes, id: \.persistentModelID) { classItem in
-                            Button(action: { onClassTap(classItem) }) {
+                            Button(action: {
+                                // Cross-module navigation - View directly calls the closure
+                                onNavigateToClass?(classItem)
+                            }) {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(classItem.title)
@@ -63,6 +67,39 @@ struct StudentDetailView: View {
                             .buttonStyle(.plain)
                         }
                     }
+                }
+
+                // Exams Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Exams (\(student.exams.count))")
+                        .font(.headline)
+
+                    Button(action: {
+                        // View directly calls router - more direct!
+                        router.presentSheet(.examList)
+                    }) {
+                        HStack {
+                            Image(systemName: "doc.text.magnifyingglass")
+                                .font(.title3)
+                                .foregroundColor(.blue)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("View All Exams")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                Text("See all exams for this student")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "arrow.right")
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding()

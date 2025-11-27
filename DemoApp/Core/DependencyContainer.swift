@@ -22,6 +22,10 @@ public final class DependencyContainer: DependencyProviding {
         ClassRepository(context: modelContext)
     }()
 
+    public lazy var examRepository: any ExamRepositoryProtocol = {
+        ExamRepository(context: modelContext)
+    }()
+
     // MARK: - Network Services (Lazy initialization)
 
     public lazy var networkService: NetworkService = {
@@ -43,7 +47,7 @@ public final class DependencyContainer: DependencyProviding {
     @MainActor
     public static func mock() -> DependencyContainer {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Student.self, Class.self, configurations: config)
+        let container = try! ModelContainer(for: Student.self, Class.self, Exam.self, configurations: config)
         return DependencyContainer(modelContext: container.mainContext)
     }
 }

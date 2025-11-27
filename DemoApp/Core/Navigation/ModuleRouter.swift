@@ -155,3 +155,23 @@ public func withoutAnimation(_ body: () -> Void) {
     transaction.disablesAnimations = true
     withTransaction(transaction, body)
 }
+
+// MARK: - Environment Support
+
+/// Environment key for ModuleRouter
+/// Allows passing router through the environment instead of as parameters
+private struct ModuleRouterKey<Destination: Hashable>: EnvironmentKey {
+    static var defaultValue: ModuleRouter<Destination>? { nil }
+}
+
+extension EnvironmentValues {
+    public var moduleRouter: ModuleRouter<StudentNavigationDestination>? {
+        get { self[ModuleRouterKey<StudentNavigationDestination>.self] }
+        set { self[ModuleRouterKey<StudentNavigationDestination>.self] = newValue }
+    }
+
+    public var classRouter: ModuleRouter<ClassNavigationDestination>? {
+        get { self[ModuleRouterKey<ClassNavigationDestination>.self] }
+        set { self[ModuleRouterKey<ClassNavigationDestination>.self] = newValue }
+    }
+}
