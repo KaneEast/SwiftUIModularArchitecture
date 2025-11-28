@@ -7,7 +7,8 @@ import SwiftUI
 
 struct StudentListView: View {
     let viewModel: StudentViewModel
-    let navigation: NavigationBuilder<StudentNavigationDestination>
+    //let navigation: NavigationBuilder<StudentNavigationDestination>
+    let router: ModuleRouter<StudentNavigationDestination>
     let onLogout: (() -> Void)?
 
     var body: some View {
@@ -28,7 +29,7 @@ struct StudentListView: View {
                 List {
                     ForEach(viewModel.filteredStudents, id: \.persistentModelID) { student in
                         StudentRow(student: student) {
-                            navigation.push(.studentDetail(student))
+                            router.navigate(to: .studentDetail(student))
                         }
                     }
                 }

@@ -20,16 +20,8 @@ public final class ClassModule {
         self.viewModel = ClassViewModel(service: service)
     }
 
-    // MARK: - Child Module Creation (按需创建)
-
-    /// 创建 ExamModule 用于展示班级的 exams
-    /// 这展示了模块间的灵活组合：父模块可以按需创建子模块
-    public func createExamModule() -> ExamModule {
-        return ExamModule(dependencies: dependencies)
-    }
-
     public func rootView() -> some View {
-        ClassListView(viewModel: viewModel, navigation: router.nav)
+        ClassListView(viewModel: viewModel, router: router)
             .routerModifier(router: router) { destination in
                 self.destinationView(for: destination)
             }
@@ -46,9 +38,9 @@ public final class ClassModule {
             )
 
         case .examList:
-            // 按需创建 ExamModule - 展示父子模块的灵活装配
-            // Parent module can create and present child module on demand
-            createExamModule().rootView()
+            // 按需创建 ExamModule - 通过 ModuleFactory 创建
+            // Create ExamModule on-demand via centralized factory
+            ModuleFactory.shared.createExamModule().rootView()
         }
     }
 }

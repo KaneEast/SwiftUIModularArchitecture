@@ -28,6 +28,9 @@ public final class AppModule {
         self.dependencies = dependencies
         self.authState = authState
 
+        // Initialize ModuleFactory with dependencies
+        ModuleFactory.shared.initialize(dependencies: dependencies)
+
         // Initialize authentication modules
         self.loginModule = LoginModule(authState: authState)
         self.onboardingModule = OnboardingModule(authState: authState)

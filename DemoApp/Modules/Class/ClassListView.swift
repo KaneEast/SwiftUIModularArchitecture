@@ -7,7 +7,7 @@ import SwiftUI
 
 struct ClassListView: View {
     let viewModel: ClassViewModel
-    let navigation: NavigationBuilder<ClassNavigationDestination>
+    let router: ModuleRouter<ClassNavigationDestination>
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,7 +27,8 @@ struct ClassListView: View {
                 List {
                     ForEach(viewModel.filteredClasses, id: \.persistentModelID) { classItem in
                         ClassRow(classItem: classItem) {
-                            navigation.push(.classDetail(classItem))
+                            //navigation.push(.classDetail(classItem))
+                            router.navigate(to: .classDetail(classItem))
                         }
                     }
                 }
